@@ -43,21 +43,26 @@ auto to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
 static bool insideTriangle(int x, int y, const Vector3f* _v)
 {   
     // TODO : Implement this function to check if the point (x, y) is inside the triangle represented by _v[0], _v[1], _v[2]
-    //¼ì²é×ø±êµãÊÇ·ñÔÚÈı½ÇĞÎÄÚ²¿
-    Vector3f vec[3];//Èı¸öÏòÁ¿PA,PB,PC
-    Vector3f point = Vector3f(x, y, 1);//µ±Ç°×ø±êµã
-    for (int i = 0; i < 3; i++) {//ÓÃµ±Ç°µã¼õÈı½ÇĞÎ¶Ëµã£¬µÃµ½Èı¸öÏòÁ¿PA,PB,PC
-        vec[i] = point - _v[i];
-    }
-    float dir[3];//²æ³ËµÄµÚÈıÎ»½á¹û
+    //æ£€æŸ¥åæ ‡ç‚¹æ˜¯å¦åœ¨ä¸‰è§’å½¢å†…éƒ¨
+    Vector3f point = Vector3f(x, y, 1);//å½“å‰åæ ‡ç‚¹
+    Vector3f vec1[3];//ä¸‰ä¸ªå‘é‡PA,PB,PC
+    Vector3f vec2[3];//ä¸‰ä¸ªå‘é‡AB,BC,CA
+    float dir[3];//å­˜å‚¨å‰ä¹˜ç»“æœzæ–¹å‘çš„å€¼
+
     for (int i = 0; i < 3; i++) {
-        int j = (i + 1) % 3; //ÏòÁ¿jÊÇÏòÁ¿iµÄÏÂÒ»¸öÏòÁ¿
-        dir[i] = (vec[i][0] * vec[j][1] - vec[j][0] * vec[i][1]); //X1Y2 - X2Y1
+        int j = (i + 1) % 3; //å‘é‡jæ˜¯å‘é‡içš„ä¸‹ä¸€ä¸ªå‘é‡
+        vec1[i] = point - _v[i];//ç”¨å½“å‰ç‚¹å‡ä¸‰è§’å½¢ç«¯ç‚¹ï¼Œå¾—åˆ°ä¸‰ä¸ªå‘é‡PA,PB,PC
+        vec2[i] = _v[i] - _v[j]; //ä¸‰è§’å½¢ä¸‰éæŒ‰é¡ºæ—¶é’ˆï¼Œä¸‰ä¸ªå‘é‡AB,BC,CA
     }
 
     for (int i = 0; i < 3; i++) {
-        int j = (i + 1) % 3;
-        if (dir[i] * dir[j]<=0) {
+        dir[i] = vec2[i].cross(vec1[i]).z(); //æå–å‰ä¹˜ç»“æœçš„zæ–¹å‘
+    }
+
+
+    for (int i = 0; i < 3; i++) {
+        int j = (i + 1) % 3; //å‘é‡jæ˜¯å‘é‡içš„ä¸‹ä¸€ä¸ªå‘é‡
+        if (dir[i] * dir[j] <= 0) { //è‹¥å‰ä¹˜çš„ç»“æœzæ–¹å‘ä¸åŒ
             return false;
         }
     }
@@ -133,7 +138,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
     x_max = std::max(t.v[0].x(), std::max(t.v[1].x(), t.v[2].x()));
     y_min = std::min(t.v[0].y(), std::min(t.v[1].y(), t.v[2].y()));
     y_max = std::max(t.v[0].y(), std::max(t.v[1].y(), t.v[2].y()));
-    //ÉÏÏÂÈ¡Õû
+    //ä¸Šä¸‹å–æ•´
     int xmin = std::floor(x_min);
     int xmax = std::ceil(x_max);
     int ymin = std::floor(y_min);
@@ -148,9 +153,9 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
                 z_interpolated *= w_reciprocal;
                
                 if (z_interpolated<depth_buf[get_index(i,j)]) {
-                    //ÉèÖÃÉî¶È
+                    //è®¾ç½®æ·±åº¦
                     depth_buf[get_index(i, j)] = z_interpolated;
-                    //ÉèÖÃÑÕÉ«
+                    //è®¾ç½®é¢œè‰²
                     set_pixel(Vector3f(i, j, 0), t.getColor());
                 } 
             }
