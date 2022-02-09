@@ -32,26 +32,29 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
     // TODO: Copy-paste your implementation from the previous assignment.
-    Eigen::Matrix4f projection;
-    float r, l, t, b, n, f;
-    float angle = eye_fov * MY_PI / 180;
-    n = zNear;
-    f = zFar;
-    t = -tan(angle / 2) * n;
-    b = -t;
-    r = aspect_ratio * t;
-    l = -r;
-    Eigen::Matrix4f Persp2Ortho;
-    Eigen::Matrix4f ortho;
-    Persp2Ortho << n, 0, 0, 0,
-        0, n, 0, 0,
-        0, 0, n + f, -n * f,
+    // Define Matrix
+    Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+    Eigen::Matrix4f M_persp2ortho = Eigen::Matrix4f::Identity();
+    Eigen::Matrix4f M_ortho = Eigen::Matrix4f::Identity();//orthographic Matrix
+
+    float angle = eye_fov * MY_PI / 180.0; // half fov angle
+
+    auto t = -zNear * tan(angle / 2);//use fov calculate h
+    auto r = t * aspect_ratio;// use aspect calculate r
+    auto l = -r;
+    auto b = -t;
+
+    M_persp2ortho << zNear, 0, 0, 0,
+        0, zNear, 0, 0,
+        0, 0, zNear + zFar, -zNear * zFar,
         0, 0, 1, 0;
-    ortho << 2 / (r - l), 0, 0, -(l + r) / 2,
+
+    M_ortho << 2 / (r - l), 0, 0, -(r + l) / 2,
         0, 2 / (t - b), 0, -(t + b) / 2,
-        0, 0, 2 / (n - f), -(n + f) / 2,
+        0, 0, 2 / (zNear - zFar), -(zNear + zFar) / 2,
         0, 0, 0, 1;
-    projection = ortho * Persp2Ortho;
+
+    projection = M_ortho * M_persp2ortho * projection;
     return projection;
 }
 
