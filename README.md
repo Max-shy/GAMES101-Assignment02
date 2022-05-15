@@ -154,18 +154,18 @@ Next, I need to compare the depth value and depth buffer of each pixel to set th
 
 ```CPP
  if (insideTriangle(i + 0.5, j + 0.5, t.v)) {
-                //Computational depth interpolation
-                auto [alpha, beta, gamma] = computeBarycentric2D(i + 0.5, j + 0.5, t.v); //Compute interpolated centroids
-                float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
-                float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
-                z_interpolated *= w_reciprocal; //z-buffer
+   //Computational depth interpolation
+   auto [alpha, beta, gamma] = computeBarycentric2D(i + 0.5, j + 0.5, t.v); //Compute interpolated centroids
+ 	float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+ 	float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+ 	z_interpolated *= w_reciprocal; //z-buffer
 
-                if (z_interpolated < depth_buf[get_index(i, j)]) { 
-                    //Update depth buffer
-                    depth_buf[get_index(i, j)] = z_interpolated;
-                    //set color
-                    set_pixel(Vector3f(i, j, 0), t.getColor());
-                }
+ 	if (z_interpolated < depth_buf[get_index(i, j)]) { 
+ 		//Update depth buffer
+ 		depth_buf[get_index(i, j)] = z_interpolated;
+ 		//set color
+  		set_pixel(Vector3f(i, j, 0), t.getColor());
+ 	}
  }
 ```
 
