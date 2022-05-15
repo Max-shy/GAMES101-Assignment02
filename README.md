@@ -230,7 +230,8 @@ Divide a pixel into four pixels for interpolation. Sets the color based on the n
 
 Let's compare the effects: 
 
-Base:![image-20220515170128818](C:\Users\mjdn\AppData\Roaming\Typora\typora-user-images\image-20220515170128818.png)
+Base:
+![image](https://user-images.githubusercontent.com/68177870/168466448-5a209696-f0c3-4e49-9579-f5011d6950cf.png)
 
 
 
