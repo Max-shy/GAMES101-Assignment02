@@ -237,7 +237,7 @@ Base:
 
 MSAA:
 
-![image-20220515170052310](C:\Users\mjdn\AppData\Roaming\Typora\typora-user-images\image-20220515170052310.png)
+![image](https://user-images.githubusercontent.com/68177870/168466556-f59e9528-6470-441a-b1df-215256a4f1ed.png)
 
 
 Obviously, MSAA is better, but it adds a lot of running time. We can see a black line in the MSAA result ,but I haven't found a solution yet.
