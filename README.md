@@ -171,7 +171,7 @@ Next, I need to compare the depth value and depth buffer of each pixel to set th
 
 Two triangles should display correctly now.
 
-![QQ图片20220515153350](F:\Desktop\QQ图片20220515153350.png)
+![QQ图片20220515153350](https://user-images.githubusercontent.com/68177870/168466393-1970cf08-d27c-40af-8535-acdb4c153dd6.png)
 
 
 We need to use MSAA for anti-aliasing. Create a new function :
