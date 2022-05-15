@@ -53,8 +53,8 @@ static bool insideTriangle(float x, float y, const Vector3f* _v)
     Eigen::Vector3f ans3 = tri_side3.cross(Point - _v[2]);
 
     //whether the results are in the same direction
-    bool flag = (ans1[2] >= 0 && ans2[2] >= 0 && ans3[2] >= 0) 
-                || (ans1[2] < 0 && ans2[2] < 0 && -ans3[2] < 0);
+    bool flag = (ans1[2] >= 0 && ans2[2] >= 0 && ans3[2] >= 0)
+        || (ans1[2] < 0 && ans2[2] < 0 && -ans3[2] < 0);
     return flag;
 }
 
@@ -140,7 +140,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
                 float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                 z_interpolated *= w_reciprocal; //z-buffer
 
-                if (z_interpolated < depth_buf[get_index(i, j)]) { 
+                if (z_interpolated < depth_buf[get_index(i, j)]) {
                     //Update depth buffer
                     depth_buf[get_index(i, j)] = z_interpolated;
                     //set color
@@ -164,35 +164,35 @@ void rst::rasterizer::rasterize_triangle_MSAA(const Triangle& t) {
     int xmax = std::ceil(x_max);
     int ymin = std::floor(y_min);
     int ymax = std::ceil(y_max);
-    
+
     //MSAA list
-    std::vector<float> dis{0.25,0.25,0.75,0.75,0.25};
+    std::vector<float> dis{ 0.25,0.25,0.75,0.75,0.25 };
 
     float cnt;//Record the num in pixel
-    float z_buffer=INT_MAX;
+    float z_buffer = INT_MAX;
 
     for (int i = xmin; i < xmax; i++) {
         for (int j = ymin; j < ymax; j++) {
             cnt = 0;
             //Four-part of one pixel
             for (int d = 0; d < 4; d++) {
-                if (insideTriangle(i + dis[d], j + dis[d+1], t.v)) {
+                if (insideTriangle(i + dis[d], j + dis[d + 1], t.v)) {
                     //Computational depth interpolation
                     auto [alpha, beta, gamma] = computeBarycentric2D(i + dis[d], j + dis[d + 1], t.v); //Compute interpolated centroids
                     float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
                     float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                     z_interpolated *= w_reciprocal; //z-buffer
-                    
+
                     z_buffer = std::min(z_buffer, z_interpolated);
                     cnt += 0.25;
                 }
             }
             //if this pixel cnt >0 ,set color
-            if (cnt > 0 && z_buffer< depth_buf[get_index(i, j)]) {
+            if (cnt > 0 && z_buffer < depth_buf[get_index(i, j)]) {
                 //Update depth buffer
                 depth_buf[get_index(i, j)] = z_buffer;
                 //set color,According to the number of cnt
-                set_pixel(Vector3f(i, j, 0), t.getColor()*cnt);
+                set_pixel(Vector3f(i, j, 0), t.getColor() * cnt);
             }
         }
     }
